@@ -1,7 +1,7 @@
 % ApplyAllEssBCs
 % This function applies essential BCs (calling subfunction ApplyEssBC.m). 
 
-% last update: 29 Apr 2021 J. Mulderrig  
+% last update: 30 Apr 2021 J. Mulderrig  
 
 function boundStruct = ApplyAllEssBCs(boundStruct)
 
@@ -10,7 +10,7 @@ function boundStruct = ApplyAllEssBCs(boundStruct)
 essDOF = []; % essDOF stores all the essential DOF
 essVals = [];  % essVals stores all the corresponding applied essential values
 
-for i = 1:size(boundStruct.SurfEssV,1)   % Loop over all essential boundaries 
+for i = 1:size(boundStruct.SurfEss,1)   % Loop over all essential boundaries 
 
     [cessDOF, cessVals]=ApplyEssBC(i,boundStruct);% assign essential BCs
     essDOF =  [essDOF; cessDOF];

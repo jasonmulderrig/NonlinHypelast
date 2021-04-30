@@ -1,51 +1,82 @@
-% LoadStep()
-% At each loadstep increment, this function calculates the change in 
-% displacement and determines whether convergence has been reached
+function globalSystem = LoadStep(meshStruct,boundStruct,solverStruct,globalSystem)
+% globalSystem = LoadStep(meshStruct,boundStruct,solverStruct,globalSystem);
+% Use a Newton-Raphson iterative solution scheme to solve for the global 
+% displacement vector. At each increment, this function calculates the 
+% change in displacement and determines if convergence has been reached
 % NOTE: FUNCTION CALLS DO NOT INCLUDE INPUTS/OUTPUTS IN FINAL FORM
-function [] = LoadStep()
 
-% Load initial displacement vector
-vk = v_nought;
+% last update: 30 Apr 2021 C. Bonneville; J. Mulderrig; S. Srivatsa 
 
-% Loop through each loadstep
-L = linspace(0,maxLoad,numLoadSteps + 1); 
-for k = 1:1:size(L,1)
-    % Initialize parameters for each loadstep
-    loadstep = L(k); vi = vk; convcon = 0; iterations = 0; 
+iterations2conv = NaN(solverStruct.numIncrs,1);
+d_i = globalSystem.d; % initial global displacement vector
+
+% Loop through each load increment
+% L = linspace(0,maxLoad,numLoadSteps + 1); 
+numIncrements=solverStruct.numIncrements;
+maxIterations=solverStruct.maxIterations;
+for k = 1:numIncrements
+    % Initialization for each load increment
+    boundStruct.SurfEss = boundStruct.SurfEssIncrs{k};
+    boundStruct.SurfNat = boundStruct.SurfNatIncrs{k};
+    iterations = 0;
     
-    % Find G, KT at first iteration using GlobalSystem.m
-    [G,KT] = GlobalSystem(vi,loadstep);
+    % Apply the incremental essential boundary conditions at the initial
+    % zeroth iteration. Note that the incremental essential boundary
+    % conditions vary only if non-homogeneous essential boundary conditions
+    % are applied.
+    boundStruct = ApplyAllEssBCs(boundStruct);
     
-    % Determine if norm(G) at first iteration is zero
-    normGi = norm(G);
-    if normGi == 0
-        % Iterate loadstep
-        convcon = 1;
+    % Calculate G and K_T at the initial zeroth iteration
+    [G_i,K_T_i] = GlobalSystem(d_i,meshStruct,boundStruct_for_this_loadstep);
+    
+    % Determine if G is the zero vector at the initial zeroth iteration,
+    % which will analytically occur at the first load increment (accounting
+    % for zero applied force) with the initial zero global displacement
+    % vector
+    if norm(G_i) == 0
+        iterations2conv(k) = iterations;
+        continue;
     else
-        iterations = iterations + 1;
+        tol = solverStruct.epsilon*norm(G_i);
     end
     
-    % Until the convergence condition is satisfied, iterate the
+    % Until convergence is reached, iteratively solve for the converged
     % displacement vector
-    while (convcon == 0) && (iterations < 15)
-        % Find iterated displacement v_i+1 using Soln.m
-        deltav = Soln(G,KT); 
-        vipo = vi + deltav;     
+    while true
+        iterations = iterations+1; 
+        % Find iterated displacement d_i_plus_1 using Soln.m
+        delta_d_i_plus_1 = Soln(G_i,K_T_i); 
+        d_i_plus_1 = d_i + delta_d_i_plus_1;     
         
         % Find G, KT at iteration i+1 using GlobalSystem.m
-        [G,KT] = GlobalSystem(vipo,loadstep);
+        [G_i_plus_1,K_T_i_plus_1] = GlobalSystem(d_i_plus_1,meshStruct,boundStruct_for_this_loadstep);
         
-        % Test for convergence: If norm(G_i+1) <= (10^-4)*norm(G_i), set 
-        % v_k+1 = v_i+1 and move on to next loadstep (k+1)
-        normGipo = norm(G);  
-        if normGipo <= (normGi * (10^-4))
-            vk = vipo; convcon = 1; 
+        % Test for convergence:
+        if norm(G_i_plus_1) <= tol % convergence is achieved
+            d_i = d_i_plus_1; % update global displacement vector
+            iterations2conv(k) = iterations;
+            break;
         end
-
-        % Update values for next iteration
-        vi = vipo; normGi = normGipo;
-        iterations = iterations + 1; 
+        % convergence is not achieved AND the maximum number of iterations
+        % has not been reached
+        if ( norm(G_i_plus_1) <= tol || isnan(norm(G_i_plus_1)) ) && iterations < maxIterations
+            d_i = d_i_plus_1; % update global displacement vector
+            G_i = G_i_plus_1; % update global residual vector
+            K_T_i = K_T_i_plus_1; % update global tangent stiffness matrix
+            continue;
+        end
+        % convergence is not achieved AND the maximum number of iterations
+        % has been reached
+        if ( norm(G_i_plus_1) <= tol || isnan(norm(G_i_plus_1)) ) && iterations == maxIterations
+            d_i = d_i_plus_1; % update global displacement vector
+            % indicate that convergence was not reached at the maximum
+            % iteration number
+            iterations2conv(k) = iterations+1;
+            break;
+        end
     end
-    
-    % End of current loadstep, package iterated results
 end
+globalSystem.d=d_i; % Store final converged global displacement vector
+% Store vector of iterations needed to achieve convergence at each load
+% increment
+solverStruct.iterations2conv=iterations2conv;

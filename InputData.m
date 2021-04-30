@@ -3,15 +3,15 @@ function [meshStruct,boundStruct,solverStruct,globalSystem]=InputData(meshStruct
 % Define the essential and natural BCs, and define the material stiffness
 % matrix D
 
-% last update: 15 Nov 2015 H. Ritz; Y. Xu
+% last update: 30 Apr 2021 C. Bonneville; J. Mulderrig; S. Srivatsa 
 
 % For complex geometries, you need to firstly plot the mesh (set both 
 % PlotInstructions.plot_mesh and PlotInstructions.plot_boundary to be
 % 'yes') to see how the number of boudaries are defined.
 
 % Define the essential BCs
-% boundStruct.SurfEssV = [];
-boundStruct.SurfEssV = [2 1 0
+% boundStruct.SurfEss = [];
+boundStruct.SurfEss = [2 1 0
                         2 2 0
                         4 1 0.5]; % e.g. [4 2 20] means all nodes on surface # 4,
 %                                % degree of freedom #2 (y direction), has a value of 20.
@@ -56,44 +56,43 @@ numEq=MeshStruct.numEq;
 d=zeros(numEq,1);
 globalSystem.d = d;
 
-numIncrs = 41;
-
-% Define the load increments for all the natural boundary conditions
-numSurfNatIncrs = numIncrs;
-SurfNatIncrs = cell(numSurfNatIncrs,1);
-
-for h = 1:numSurfNatIncrs % Loop over all load increments
-    SurfNatIncr = boundStruct.SurfNat;
-    for i = 1:size(SurfNatIncr,1) % Loop over all natural boundaries
-        tangentialTractionVal = SurfNatIncr(i,2);
-        normalTractionVal = SurfNatIncr(i,3);
-        tangentialTractionIncr = (h-1)/(numSurfNatIncrs-1)*tangentialTractionVal;
-        normalTractionIncr = (h-1)/(numSurfNatIncrs-1)*normalTractionVal;
-        SurfNatIncr(i,2) = tangentialTractionIncr;
-        SurfNatIncr(i,3) = normalTractionIncr;
-    end
-    SurfNatIncrs(h) = SurfNatIncr;
-end
-boundStruct.SurfNatIncrs = SurfNatIncrs;
+numIncrements = 41; ement
 
 % Define the displacement increments for all the essemtial boundary conditions
-numSurfEssIncrs = numIncrs;
-SurfEssIncrs = cell(numSurfEssIncrs,1);
+SurfEssIncrements = cell(numIncrements,1);
 
-for h = 1:numSurfEssIncrs % Loop over all displacement increments
-    SurfEssIncr = boundStruct.SurfEssV;
-    for i = 1:size(SurfEssIncr,1) % Loop over all essential boundaries
-        fixedDisplacementVal = SurfEssIncr(i,3);
-        fixedDisplacementIncr = (h-1)/(numSurfEssIncrs-1)*fixedDisplacementVal;
-        SurfEssIncr(i,3) = fixedDisplacementIncr;
+for k = 1:numIncrements % Loop over all displacement increments
+    SurfEssIncrement = boundStruct.SurfEss;
+    for i = 1:size(SurfEssIncrement,1) % Loop over all essential boundaries
+        fixedDisplacementVal = SurfEssIncrement(i,3);
+        fixedDisplacementIncr = (k-1)/(numIncrements-1)*fixedDisplacementVal;
+        SurfEssIncrement(i,3) = fixedDisplacementIncr;
     end
-    SurfEssIncrs(h) = SurfEssIncr;
+    SurfEssIncrements(k) = SurfEssIncrement;
 end
-boundStruct.SurfEssIncrs = SurfEssIncrs;
+boundStruct.SurfEssIncrements = SurfEssIncrements;
+
+% Define the load increments for all the natural boundary conditions
+SurfNatIncrements = cell(numIncrements,1);
+
+for k = 1:numIncrements % Loop over all load increments
+    SurfNatIncrement = boundStruct.SurfNat;
+    for i = 1:size(SurfNatIncrement,1) % Loop over all natural boundaries
+        tangentialTractionVal = SurfNatIncrement(i,2);
+        normalTractionVal = SurfNatIncrement(i,3);
+        tangentialTractionIncr = (k-1)/(numIncrements-1)*tangentialTractionVal;
+        normalTractionIncr = (k-1)/(numIncrements-1)*normalTractionVal;
+        SurfNatIncrement(i,2) = tangentialTractionIncr;
+        SurfNatIncrement(i,3) = normalTractionIncr;
+    end
+    SurfNatIncrements(k) = SurfNatIncrement;
+end
+boundStruct.SurfNatIncrements = SurfNatIncrements;
 
 % Define constants used for the nonlinear Newton-Raphson solution scheme
+solverStruct.numIncrements=numIncrements; % number of 
 % maximum number of Newton-Raphson iterations permitted
-solverStruct.maxIter = 15; 
+solverStruct.maxIterations = 15; 
 % used to define the relative convergence tolerance
 solverStruct.epsilon = 1e-4; 
 

@@ -7,11 +7,11 @@ function  [essDOF, essVals]=ApplyEssBC(i,boundStruct)
 % last update: 17 Nov 2015 H. Ritz; Y. Xu 
 
 %  Extract the node number of the boundary nodes on boundary ID.
-bn = boundStruct.SurfEssV(i,1); % current surface number
-dir = boundStruct.SurfEssV(i,2); % direction (x or y)
+bn = boundStruct.SurfEss(i,1); % current surface number
+dir = boundStruct.SurfEss(i,2); % direction (x or y)
 BNodes = boundStruct.nodes(bn).Nodes; % Boundary node numbers
 
 essDOF = 2*(BNodes-1) + dir; % degree of freedom
 essDOF = essDOF';
 
-essVals = ones(length(essDOF),1)*boundStruct.SurfEssV(i,3); % or use repmat function 
+essVals = ones(length(essDOF),1)*boundStruct.SurfEss(i,3); % or use repmat function 

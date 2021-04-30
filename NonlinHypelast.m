@@ -66,6 +66,8 @@ tic % start a timer, just for fun
 toc
 disp(sprintf('\b   (Preprocessing)')) % output the time for meshing
 tic
+% Solve the global displacements using a Newton-Raphson iterative solver
+globalSystem = LoadStep(meshStruct,boundStruct,solverStruct,globalSystem);
 globalSystem = Assembly(meshStruct);% Loop over all the elements and 
                                   % assemble the global sparse format of the 
                                   % "stiffness" matrix and "force" vector                
