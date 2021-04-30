@@ -18,7 +18,7 @@ fe=zeros(numDOF*nnpe,1); % initialize elemental force vector
 xvec=nCoords(elCon(elmID,:),1); % these are column vectors of the
 yvec=nCoords(elCon(elmID,:),2); % physical coordinates of the
                                 % nodes of this element
-                               
+                              
 
 for iqp=1:size(qp,1) % loop over quadrature points
     % for each quadrature point ...
