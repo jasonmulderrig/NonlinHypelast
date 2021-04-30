@@ -14,8 +14,8 @@ end
 
 % Apply essential BC(s)
 
-essDOF = []; % TessDOF stores all the essential DOF
-essVals = [];  % TessVals stores all the corresponding applied essential values
+essDOF = []; % essDOF stores all the essential DOF
+essVals = [];  % essVals stores all the corresponding applied essential values
 
 for i = 1:size(boundStruct.SurfEssV,1)   % Loop over all essential boundaries 
 

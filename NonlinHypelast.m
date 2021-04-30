@@ -62,7 +62,7 @@ tic % start a timer, just for fun
 [meshStruct,boundStruct,PlotInstructions]=MeshGeometry;
 
 % choose plotting options and define BC type and material properties
-[meshStruct,boundStruct]=InputData(meshStruct,boundStruct);
+[meshStruct,boundStruct,solverStruct,globalSystem]=InputData(meshStruct,boundStruct);
 toc
 disp(sprintf('\b   (Preprocessing)')) % output the time for meshing
 tic
