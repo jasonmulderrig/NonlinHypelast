@@ -17,15 +17,15 @@ d_i = globalSystem.d; % initial global displacement vector
 % Loop through each load increment
 for k = 1:numIncrements
     % Initialization for each load increment
-    boundStruct.SurfEss = boundStruct.SurfEssIncrs{k};
-    boundStruct.SurfNat = boundStruct.SurfNatIncrs{k};
+    boundStruct.SurfEss = boundStruct.SurfEssIncrements{k};
+    boundStruct.SurfNat = boundStruct.SurfNatIncrements{k};
     iterations = 0;
     
     % Apply the incremental essential boundary conditions at the initial
     % zeroth iteration. Note that the incremental essential boundary
     % conditions vary only if non-homogeneous essential boundary conditions
     % are applied.
-    boundStruct = ApplyAllEssBCs(boundStruct);
+    d_i = ApplyAllEssBCs(d_i,boundStruct);
     
     % Calculate G and K_T at the initial zeroth iteration
     [G_i,K_T_i] = GlobalSystemCalcn(d_i,meshStruct,boundStruct);
@@ -47,7 +47,7 @@ for k = 1:numIncrements
     while true
         iterations = iterations+1; 
         % Find iterated displacement d_i_plus_1 using Soln.m
-        delta_d_i_plus_1 = Soln(G_i,K_T_i); 
+        delta_d_i_plus_1 = Soln(G_i,K_T_i,boundStruct); 
         d_i_plus_1 = d_i + delta_d_i_plus_1;     
         
         % Find G, KT at iteration i+1 using GlobalSystem.m

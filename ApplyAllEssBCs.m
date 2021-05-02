@@ -3,7 +3,7 @@
 
 % last update: 30 Apr 2021 J. Mulderrig  
 
-function boundStruct = ApplyAllEssBCs(boundStruct)
+function d = ApplyAllEssBCs(d,boundStruct)
 
 % Apply essential BC(s)
 
@@ -24,4 +24,5 @@ end
 essVals = essVals(m);
 
 boundStruct.essDOF = essDOF;
-boundStruct.ebcVals = essVals;
+
+d(essDOF) = essVals;

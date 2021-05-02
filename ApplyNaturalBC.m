@@ -9,7 +9,7 @@
 % Last update: 17 Nov 2015 H. Ritz ; Y. Xu                                |
 % ------------------------------------------------------------------------|
 %
-function  globalSystem=ApplyNaturalBC(i,boundStruct,meshStruct,globalSystem)
+function  P=ApplyNaturalBC(i,boundStruct,meshStruct,P)
 % Computed the element load from natural BCs.
 
 % unpack necessary variables
@@ -24,8 +24,6 @@ numDOF=meshStruct.numDOF;
 nCoords=meshStruct.nCoords;
 elCon=meshStruct.elCon;
 gatherMat=meshStruct.gatherMat;
-% K = globalSystem.K;
-F = globalSystem.F;
 ldof = nnpe*numDOF;       % Degrees of freedom per element
 
 Num = length(BElems); %  Extract the number of boundary elements
@@ -36,8 +34,7 @@ w  = [1,1];            % be generalized for other situations.
 
 for elmID = 1 : Num
     
-%     Ke = zeros(ldof);     % initialize element stiffness matrix
-    fe = zeros(ldof,1);   % initialize element load vector
+    P_e = zeros(ldof,1);  % initialize elemental external work vector
     
     glb = elCon(BElems(elmID),:);   % Global number of the element nodes
     
@@ -88,44 +85,42 @@ for elmID = 1 : Num
             fprintf(1, 'This element type is not implemented\n');
         end
         
-        felm.N = n;           % put basis function into struct fe
-        felm.x = n*coord;     % Calculate the global coordinates of the
+        P_elm.N = n;           % put basis function into struct P_elem
+        P_elm.x = n*coord;     % Calculate the global coordinates of the
         % current integration points
         Jacc = dn*coord;      % Calculate the components of the Jaccobian matrix
         % Now it is a vector
         detJ = norm(Jacc);    % Calculate the norm of the vector
         
-        felm.detJxW = detJ * w(qp); % Calculate the integration weight
+        P_elm.detJxW = detJ * w(qp); % Calculate the integration weight
         
-        felm.nx = Jacc(2)/detJ;    % Calculate the direction cosines
-        felm.ny = -Jacc(1)/detJ;
+        P_elm.nx = Jacc(2)/detJ;    % Calculate the direction cosines
+        P_elm.ny = -Jacc(1)/detJ;
 
         % Extract the N matrix
         if (nnpe == 4)
-            N = [ felm.N(1),   0,    felm.N(2),   0,     felm.N(3),     0,  felm.N(4),  0;
-                0 ,  felm.N(1),    0   ,  felm.N(2),   0,    felm.N(3),  0 ,  felm.N(4)];
+            N = [ P_elm.N(1),   0,    P_elm.N(2),   0,     P_elm.N(3),     0,  P_elm.N(4),  0;
+                0 ,  P_elm.N(1),    0   ,  P_elm.N(2),   0,    P_elm.N(3),  0 ,  P_elm.N(4)];
         else
-            N = [ felm.N(1),   0,    felm.N(2),   0,     felm.N(3),     0;
-                0 ,  felm.N(1),    0   ,  felm.N(2),   0,    felm.N(3)];
+            N = [ P_elm.N(1),   0,    P_elm.N(2),   0,     P_elm.N(3),     0;
+                0 ,  P_elm.N(1),    0   ,  P_elm.N(2),   0,    P_elm.N(3)];
             
         end
         
         % Transform to x and y direction using the following formula
         % where nx and ny are the direction cosines at the current boundary
-        q = [felm.nx -felm.ny;felm.ny  felm.nx] * [qn;qt];
+        q = [P_elm.nx -P_elm.ny;P_elm.ny  P_elm.nx] * [qn;qt];
         
         % Assemble into force vector
-        fe = fe +  N' * q * felm.detJxW;
+        P_e = P_e +  N' * q * P_elm.detJxW;
         
         
     end
-    clear felm;
+    clear P_elm;
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Assemble to global
     glbROW = gatherMat(BElems(elmID),:); % global row index
-    F(glbROW)=F(glbROW)+fe;
+    P(glbROW)=P(glbROW)+P_e;
 
 end
-% globalSystem.K = K;
-globalSystem.F = F;
