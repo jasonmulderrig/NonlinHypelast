@@ -7,13 +7,14 @@ function globalSystem = LoadStep(meshStruct,boundStruct,solverStruct,globalSyste
 
 % last update: 30 Apr 2021 C. Bonneville; J. Mulderrig; S. Srivatsa 
 
-iterations2conv = NaN(solverStruct.numIncrs,1);
+% Initialization before looping through each load increment
+numIncrements=solverStruct.numIncrements;
+maxIterations=solverStruct.maxIterations;
+
+iterations2conv = NaN(numIncrements,1);
 d_i = globalSystem.d; % initial global displacement vector
 
 % Loop through each load increment
-% L = linspace(0,maxLoad,numLoadSteps + 1); 
-numIncrements=solverStruct.numIncrements;
-maxIterations=solverStruct.maxIterations;
 for k = 1:numIncrements
     % Initialization for each load increment
     boundStruct.SurfEss = boundStruct.SurfEssIncrs{k};
@@ -37,7 +38,8 @@ for k = 1:numIncrements
         iterations2conv(k) = iterations;
         continue;
     else
-        tol = solverStruct.epsilon*norm(G_i);
+        epsilon = solverStruct.epsilon;
+        tol = epsilon*norm(G_i);
     end
     
     % Until convergence is reached, iteratively solve for the converged

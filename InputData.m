@@ -56,7 +56,8 @@ numEq=MeshStruct.numEq;
 d=zeros(numEq,1);
 globalSystem.d = d;
 
-numIncrements = 41; ement
+% number of increments for load and displacement permitted
+numIncrements = 41; 
 
 % Define the displacement increments for all the essemtial boundary conditions
 SurfEssIncrements = cell(numIncrements,1);
@@ -90,7 +91,8 @@ end
 boundStruct.SurfNatIncrements = SurfNatIncrements;
 
 % Define constants used for the nonlinear Newton-Raphson solution scheme
-solverStruct.numIncrements=numIncrements; % number of 
+% number of increments for load and displacement permitted
+solverStruct.numIncrements=numIncrements;
 % maximum number of Newton-Raphson iterations permitted
 solverStruct.maxIterations = 15; 
 % used to define the relative convergence tolerance
