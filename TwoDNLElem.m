@@ -78,9 +78,9 @@ for iqp = 1 : size(qp, 1) % loop over quadrature points
     
     B_L_e = cell(nnpe,1);
     for np=1:nnpe
-        B_L_e(np) = [F_e(1, 1) * dNdXY(1, np), F_e(2, 1) * dNdXY(1, np);
+        B_L_e{np} = [F_e(1, 1) * dNdXY(1, np), F_e(2, 1) * dNdXY(1, np);
                       F_e(1, 2) * dNdXY(2, np), F_e(2, 2) * dNdXY(2, np);
-                      F_e(1, 1) * dNdXY(2, np) + F_e(1, 2) * dNdXY(1, np),  Fe(2, 1) * dNdXY(2, np) + Fe(2, 2) * dNdXY(1, np)];
+                      F_e(1, 1) * dNdXY(2, np) + F_e(1, 2) * dNdXY(1, np),  F_e(2, 1) * dNdXY(2, np) + F_e(2, 2) * dNdXY(1, np)];
     end
        
     % --------------- Second PK Stress (Slide 12/18 - Eq 23) ------------ %

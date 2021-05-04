@@ -11,16 +11,15 @@ function [meshStruct,boundStruct,solverStruct,globalSystem]=InputData(meshStruct
 
 % Define the essential BCs
 % boundStruct.SurfEss = [];
-boundStruct.SurfEss = [2 1 0
-                        2 2 0
-                        4 1 0.5]; % e.g. [4 2 20] means all nodes on surface # 4,
+boundStruct.SurfEss = [1, 1, 0;
+                       1, 2, 0]; % e.g. [4 2 20] means all nodes on surface # 4,
 %                                % degree of freedom #2 (y direction), has a value of 20.
 
 % Define the natural BCs
 % The natural boundary condition is defined in tangential and normal
 % direction (rather than global x and y direction),outer normal is
 % positive.
-boundStruct.SurfNat = [3 0 1e11]; % e.g. [3 10 -10] means surface # 3 has 
+boundStruct.SurfNat = [2 1 0]; % e.g. [3 10 -10] means surface # 3 has 
                                  % a constantly distributed tangential traction
                                  % 10 and normal traction (pointing in) 10.
 
@@ -46,7 +45,7 @@ switch ConstitutiveLaw
         error('Is this the St Venant or the compressible Neo-Hookean constitutive law?');
 end
 
-meshStruct.Material.Lambda=Lambda;
+meshStruct.Material.lambda=Lambda;
 meshStruct.Material.mu=mu;
 meshStruct.DeformationState=DeformationState;
 meshStruct.ConstitutiveLaw=ConstitutiveLaw;
@@ -69,7 +68,7 @@ for k = 1:numIncrements % Loop over all displacement increments
         fixedDisplacementIncr = (k-1)/(numIncrements-1)*fixedDisplacementVal;
         SurfEssIncrement(i,3) = fixedDisplacementIncr;
     end
-    SurfEssIncrements(k) = SurfEssIncrement;
+    SurfEssIncrements{k} = SurfEssIncrement;
 end
 boundStruct.SurfEssIncrements = SurfEssIncrements;
 
@@ -86,7 +85,7 @@ for k = 1:numIncrements % Loop over all load increments
         SurfNatIncrement(i,2) = tangentialTractionIncr;
         SurfNatIncrement(i,3) = normalTractionIncr;
     end
-    SurfNatIncrements(k) = SurfNatIncrement;
+    SurfNatIncrements{k} = SurfNatIncrement;
 end
 boundStruct.SurfNatIncrements = SurfNatIncrements;
 

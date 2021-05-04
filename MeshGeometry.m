@@ -20,7 +20,7 @@ PlotInstructions.plot_vector   = 'yes';
 PlotInstructions.plot_deformed = 'yes';
 PlotInstructions.plot_fringes  = 'yes';
 
-nnpe = 3;           % number of nodes per element.
+nnpe = 4;           % number of nodes per element.
                     % currently T3 and Q4 elements are supported
 
 nsd = 2;            % number of spatial dimensions 

@@ -14,8 +14,11 @@ maxIterations=solverStruct.maxIterations;
 iterations2conv = NaN(numIncrements,1);
 d_i = globalSystem.d; % initial global displacement vector
 
+
+
 % Loop through each load increment
 for k = 1:numIncrements
+    k
     % Initialization for each load increment
     boundStruct.SurfEss = boundStruct.SurfEssIncrements{k};
     boundStruct.SurfNat = boundStruct.SurfNatIncrements{k};
@@ -25,7 +28,7 @@ for k = 1:numIncrements
     % zeroth iteration. Note that the incremental essential boundary
     % conditions vary only if non-homogeneous essential boundary conditions
     % are applied.
-    d_i = ApplyAllEssBCs(d_i,boundStruct);
+    [d_i, boundStruct] = ApplyAllEssBCs(d_i,boundStruct);
     
     % Calculate G and K_T at the initial zeroth iteration
     [G_i,K_T_i] = GlobalSystemCalcn(d_i,meshStruct,boundStruct);
@@ -45,13 +48,16 @@ for k = 1:numIncrements
     % Until convergence is reached, iteratively solve for the converged
     % displacement vector
     while true
-        iterations = iterations+1; 
+        iterations = iterations+1;
         % Find iterated displacement d_i_plus_1 using Soln.m
-        delta_d_i_plus_1 = Soln(G_i,K_T_i,boundStruct); 
+        delta_d_i_plus_1 = SolnNL(G_i,K_T_i,boundStruct); 
         d_i_plus_1 = d_i + delta_d_i_plus_1;     
         
         % Find G, KT at iteration i+1 using GlobalSystem.m
         [G_i_plus_1,K_T_i_plus_1] = GlobalSystemCalcn(d_i_plus_1,meshStruct,boundStruct);
+        
+        %var = norm(G_i_plus_1)
+        tol = 1e-8;
         
         % Test for convergence:
         if norm(G_i_plus_1) <= tol % convergence is achieved
@@ -61,7 +67,7 @@ for k = 1:numIncrements
         end
         % convergence is not achieved AND the maximum number of iterations
         % has not been reached
-        if ( norm(G_i_plus_1) <= tol || isnan(norm(G_i_plus_1)) ) && iterations < maxIterations
+        if ( norm(G_i_plus_1) > tol || isnan(norm(G_i_plus_1)) ) && iterations < maxIterations
             d_i = d_i_plus_1; % update global displacement vector
             G_i = G_i_plus_1; % update global residual vector
             K_T_i = K_T_i_plus_1; % update global tangent stiffness matrix
@@ -69,7 +75,7 @@ for k = 1:numIncrements
         end
         % convergence is not achieved AND the maximum number of iterations
         % has been reached
-        if ( norm(G_i_plus_1) <= tol || isnan(norm(G_i_plus_1)) ) && iterations == maxIterations
+        if ( norm(G_i_plus_1) > tol || isnan(norm(G_i_plus_1)) ) && iterations == maxIterations
             d_i = d_i_plus_1; % update global displacement vector
             % indicate that convergence was not reached at the maximum
             % iteration number

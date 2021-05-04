@@ -3,7 +3,7 @@
 
 % last update: 30 Apr 2021 J. Mulderrig  
 
-function d = ApplyAllEssBCs(d,boundStruct)
+function [d, boundStruct] = ApplyAllEssBCs(d,boundStruct)
 
 % Apply essential BC(s)
 
