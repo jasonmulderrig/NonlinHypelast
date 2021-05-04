@@ -52,7 +52,7 @@ meshStruct.DeformationState=DeformationState;
 meshStruct.ConstitutiveLaw=ConstitutiveLaw;
 
 % initialize the global displacement vector to the zero vector
-numEq=MeshStruct.numEq;
+numEq=meshStruct.numEq;
 d=zeros(numEq,1);
 globalSystem.d = d;
 
