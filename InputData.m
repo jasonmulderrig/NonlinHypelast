@@ -11,15 +11,15 @@ function [meshStruct,boundStruct,solverStruct,globalSystem]=InputData(meshStruct
 
 % Define the essential BCs
 % boundStruct.SurfEss = [];
-boundStruct.SurfEss = [1, 1, 0;
-                       1, 2, 0]; % e.g. [4 2 20] means all nodes on surface # 4,
+boundStruct.SurfEss = [4, 1, 0;
+                       4, 2, 0]; % e.g. [4 2 20] means all nodes on surface # 4,
 %                                % degree of freedom #2 (y direction), has a value of 20.
 
 % Define the natural BCs
 % The natural boundary condition is defined in tangential and normal
 % direction (rather than global x and y direction),outer normal is
 % positive.
-boundStruct.SurfNat = [2 1 0]; % e.g. [3 10 -10] means surface # 3 has 
+boundStruct.SurfNat = [2 0 5]; % e.g. [3 10 -10] means surface # 3 has 
                                  % a constantly distributed tangential traction
                                  % 10 and normal traction (pointing in) 10.
 
@@ -56,7 +56,7 @@ d=zeros(numEq,1);
 globalSystem.d = d;
 
 % number of increments for load and displacement permitted
-numIncrements = 41; 
+numIncrements = 21; 
 
 % Define the displacement increments for all the essemtial boundary conditions
 SurfEssIncrements = cell(numIncrements,1);
