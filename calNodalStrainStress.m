@@ -61,17 +61,31 @@ for e = 1:numEls
         JofXiEta=dNdXiEta*xynode;    % jacobian at this QP (2x2 matrix)
         dNdXY=JofXiEta\dNdXiEta;     % 2xnnpe array of dNdX at ths QP
      
-        % Here we no longer need the N matrix as in TwoDElem.m
-        B=[];
-        for np=1:nnpe         
-            B=[B,[dNdXY(1,np), 0; 0, dNdXY(2,np); dNdXY(2,np), dNdXY(1,np)]];
+        % ----- Deformation gradient F_e (Slide 13/18 - Eq 24) -------- %
+        F_e = zeros(2);
+        for np=1:nnpe
+            F_e_np = [ux(np) * dNdXY(1, np), ux(np) * dNdXY(2, np);
+                      uy(np) * dNdXY(1, np), uy(np) * dNdXY(2, np)];
+            F_e = F_e + F_e_np; 
         end
-        % elemental strain and stress
-        lcStrain = B * lcU;
-        lcStress = D * lcStrain;
+        
+        % ---------------- Material stiffness matrix D ---------------- %
+        switch ConstitutiveLaw
+            case 'compressibleNeoHookean'
+                % solve for D here for the element and qp, which is  
+                % dependent on C_e, det(F_e), and the Lame constants
+            case 'StVenant'
+                D=meshStruct.Material.D;
+        end
+        
+        % ------ Euler Lagrange Tensor Ee (Slide 13/18 - Eq 25) ------- %
+        E_e = 0.5 * (C_e - eye(2));
+        
+        % ------------ Second PK Stress (Slide 12/18 - Eq 23) --------- %
+        S_e = D * [E_e(1, 1); E_e(2, 2); 2 * E_e(1, 2)]; % Voigt notation
         
         Me = Me + NofXiEta'*NofXiEta * w(iqp)*det(JofXiEta);
-        Re = Re + NofXiEta'* [lcStrain',lcStress'] * w(iqp)*det(JofXiEta);
+        Re = Re + NofXiEta'* [E_e',S_e'] * w(iqp)*det(JofXiEta);
 
     end
     
