@@ -17,8 +17,8 @@ delta_d_plus_1 = zeros(numEq,1);
 K_T_FF	= K_T(freeDOF,freeDOF);    % Extract K_F matrix 
 G_F = G(freeDOF);            % Extract G_F vector
 
-delta_d_plus_1_F = K_T_FF\( -G_F );
- 
+delta_d_plus_1_F = -K_T_FF\G_F;
+
 delta_d_plus_1(freeDOF) = delta_d_plus_1_F;
 
 

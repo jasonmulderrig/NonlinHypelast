@@ -32,8 +32,8 @@ if LoadChoice==1 % use LoadChoice =1 only when the geometry is a rectangular
     yb = 0.0;           % bottom location of the range in the y direction
     yt = 4.0;           % top location of the range in the y direction
 
-    nx = 30;            % number of elements in x direction
-    ny = 50;            % number of elements in y direction
+    nx = 1; % 30;            % number of elements in x direction
+    ny = 1; % 50;            % number of elements in y direction
 
     % Use the provided box grid generator
     [nCoords,elCon,boundStruct]=BoxGrid_2D(nsd,xl,xr,yb,yt,nnpe,nx,ny); 

@@ -11,20 +11,20 @@ function [meshStruct,boundStruct,solverStruct,globalSystem]=InputData(meshStruct
 
 % Define the essential BCs
 % boundStruct.SurfEss = [];
-boundStruct.SurfEss = [4, 1, 0;
-                       4, 2, 0]; % e.g. [4 2 20] means all nodes on surface # 4,
+boundStruct.SurfEss = [4 1 0
+                       4 2 0]; % e.g. [4 2 20] means all nodes on surface # 4,
 %                                % degree of freedom #2 (y direction), has a value of 20.
 
 % Define the natural BCs
 % The natural boundary condition is defined in tangential and normal
 % direction (rather than global x and y direction),outer normal is
 % positive.
-boundStruct.SurfNat = [2 0 5]; % e.g. [3 10 -10] means surface # 3 has 
+boundStruct.SurfNat = [2 0 1e-7]; % e.g. [3 10 -10] means surface # 3 has 
                                  % a constantly distributed tangential traction
                                  % 10 and normal traction (pointing in) 10.
 
 % Define material properties
-Lambda = 1; % first normalized Lame constant
+lambda = 1; % first normalized Lame constant
 mu     = 10; % second normalized Lame constant
 DeformationState = 'PlaneStrain'; % only in plane strain deformation
 ConstitutiveLaw = 'StVenant';
@@ -38,14 +38,14 @@ end
 
 switch ConstitutiveLaw
     case 'StVenant'
-        D=[Lambda+2*mu Lambda 0 ; Lambda Lambda+2*mu 0 ; 0 0 mu];
+        D=[lambda+2*mu lambda 0 ; lambda lambda+2*mu 0 ; 0 0 mu];
         meshStruct.Material.D=D;
     case 'compressibleNeoHookean' % do nothing; continue on
     otherwise
         error('Is this the St Venant or the compressible Neo-Hookean constitutive law?');
 end
 
-meshStruct.Material.lambda=Lambda;
+meshStruct.Material.lambda=lambda;
 meshStruct.Material.mu=mu;
 meshStruct.DeformationState=DeformationState;
 meshStruct.ConstitutiveLaw=ConstitutiveLaw;
@@ -56,7 +56,7 @@ d=zeros(numEq,1);
 globalSystem.d = d;
 
 % number of increments for load and displacement permitted
-numIncrements = 21; 
+numIncrements = 3; % 41; 
 
 % Define the displacement increments for all the essemtial boundary conditions
 SurfEssIncrements = cell(numIncrements,1);
@@ -94,7 +94,7 @@ boundStruct.SurfNatIncrements = SurfNatIncrements;
 solverStruct.numIncrements=numIncrements;
 % maximum number of Newton-Raphson iterations permitted
 solverStruct.maxIterations = 15; 
-% used to define the relative convergence tolerance
-solverStruct.epsilon = 1e-4; 
+% used to define the constant convergence tolerance
+solverStruct.tol = 1e-8; 
 
 

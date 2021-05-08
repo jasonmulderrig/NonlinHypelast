@@ -67,12 +67,12 @@ toc
 disp(sprintf('\b   (Preprocessing)')) % output the time for meshing
 tic
 % Solve the global displacements using a Newton-Raphson iterative solver
-globalSystem = LoadStep(meshStruct,boundStruct,solverStruct,globalSystem);
+[solverStruct,globalSystem] = LoadStep(meshStruct,boundStruct,solverStruct,globalSystem);
 toc
 disp(sprintf('\b   (Nonlinear Solution)')) % output the time for the solution
-tic
-
-% Post-process for plots, flux, etc.
-PostProcessor(PlotInstructions,meshStruct,globalSystem);
-toc
-disp(sprintf('\b   (Postprocessing)')) % output time for post-processing
+% tic
+% 
+% % Post-process for plots, flux, etc.
+% PostProcessor(PlotInstructions,meshStruct,globalSystem);
+% toc
+% disp(sprintf('\b   (Postprocessing)')) % output time for post-processing

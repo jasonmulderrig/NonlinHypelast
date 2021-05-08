@@ -9,8 +9,6 @@ nnpe = meshStruct.nnpe;
 numDOF = meshStruct.numDOF;
 nCoords = meshStruct.nCoords;
 elCon = meshStruct.elCon;
-mu = meshStruct.Material.mu;
-lambda = meshStruct.Material.lambda;
 ConstitutiveLaw=meshStruct.ConstitutiveLaw;
 
 % get nodal coordinates for this element
