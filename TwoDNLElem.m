@@ -63,13 +63,28 @@ for iqp = 1 : size(qp, 1) % loop over quadrature points
     
     switch ConstitutiveLaw
         case 'compressibleNeoHookean'
+            
+            J_e = det(F_e);
+            invC_e = inv(C_e);
+            beta = meshStruct.Material.lambda;
+            mu = meshStruct.Material.mu;
+            
+            D11 = (beta * J_e + 2 * mu) * invC_e(1, 1) ^ 2;
+            D22 = (beta * J_e + 2 * mu) * invC_e(2, 2) ^ 2;
+            D33 = - (beta * (J_e - 1) * J_e - mu) * invC_e(1, 1) * invC_e(2, 2) + (beta * J_e ^ 2 + mu) * invC_e(1, 2) ^ 2;
+            D12 = - 2 * (beta * (J_e - 1) * J_e - mu) * invC_e(1, 2) ^ 2 + beta * (2 * J_e - 1) * J_e * invC_e(1, 1) * invC_e(2, 2);
+            D13 = (beta * J_e + 2 * mu) * invC_e(1, 1) * invC_e(1, 2);
+            D23 = (beta * J_e + 2 * mu) * invC_e(1, 2) * invC_e(2, 2);
+            
+            D = [D11, D12, D13; D12, D22, D23; D13, D23, D33];
+            
             % solve for D here for the element and qp, which is dependent 
             % on C_e, det(F_e), and the Lame constants
             % 
             %
             %
         case 'StVenant'
-            D=meshStruct.Material.D;
+            D = meshStruct.Material.D;
     end
     
     % ----------------- B_L Matrix (Slide 14/18 - Eq 26) ---------------- %
