@@ -100,7 +100,6 @@ for j = 0 : nelemy                      % loop over all nodes, set up the coordi
         nodalcoords(nodeID,2) = y(j+1);       
     end
 end
-
                                         % What global nodes are in each
                                         % boundary segment?
                                   
