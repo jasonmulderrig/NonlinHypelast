@@ -27,7 +27,7 @@ boundStruct.SurfNat = [2 0 1e-4]; % e.g. [3 10 -10] means surface # 3 has
 lambda = 1; % first normalized Lame constant
 mu     = 10; % second normalized Lame constant
 DeformationState = 'PlaneStrain'; % only in plane strain deformation
-ConstitutiveLaw = 'compressibleNeoHookean';
+ConstitutiveLaw = 'StVenant';
 switch DeformationState
     case 'PlaneStrain' % do nothing; continue on
     otherwise
