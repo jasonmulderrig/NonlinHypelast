@@ -70,9 +70,9 @@ tic
 [solverStruct,globalSystem] = LoadStep(meshStruct,boundStruct,solverStruct,globalSystem);
 toc
 disp(sprintf('\b   (Nonlinear Solution Complete)')) % output the time for the solution
-% tic
+tic
 % 
 % % Post-process for plots, flux, etc.
-% PostProcessor(PlotInstructions,meshStruct,globalSystem);
-% toc
-% disp(sprintf('\b   (Postprocessing)')) % output time for post-processing
+PostProcessor(PlotInstructions,meshStruct,globalSystem);
+toc
+disp(sprintf('\b   (Postprocessing)')) % output time for post-processing
