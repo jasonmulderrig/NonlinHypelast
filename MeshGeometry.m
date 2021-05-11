@@ -28,7 +28,7 @@ if LoadChoice==1 % use LoadChoice =1 only when the geometry is a rectangular
     % Set this information for each problem
 
     xl = 0.0;           % left location of the range in the x direction
-    xr = 1.0;           % right location of the range in the x direction
+    xr = 4.0;           % right location of the range in the x direction
     yb = 0.0;           % bottom location of the range in the y direction
     yt = 4.0;           % top location of the range in the y direction
 
