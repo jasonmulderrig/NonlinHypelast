@@ -24,7 +24,7 @@ if strcmp(PlotInstructions.plot_contour,'yes')
 end
 
 % Calculate the strain and stress
-[~,sig] = calNodalStrainStress(d,meshStruct);
+[~,sig] = calNodalStrainStress(d,meshStruct,globalSystem);
 
 sigma_xx = sig(:,1);
 sigma_yy = sig(:,2); 
