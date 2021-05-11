@@ -24,5 +24,10 @@ end
 essVals = essVals(m);
 
 boundStruct.essDOF = essDOF;
-
 d(essDOF) = essVals;
+
+numEq=length(d);
+freeDOF=setdiff(1:numEq,essDOF)';
+boundStruct.freeDOF = freeDOF;
+
+

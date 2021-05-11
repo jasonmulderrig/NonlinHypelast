@@ -5,12 +5,8 @@
 
 function delta_d_plus_1 = SolnNL(G,K_T,boundStruct)
 % unpack the things you need
-essDOF = boundStruct.essDOF;
+freeDOF = boundStruct.freeDOF;
 numEq=length(G);
-
-freeDOF=setdiff(1:numEq,essDOF); % this returns the indices to the DOF that 
-                             % do NOT have essential boundary conditions 
-                             % (free DOF)
 
 delta_d_plus_1 = zeros(numEq,1);
                              

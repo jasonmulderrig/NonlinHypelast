@@ -69,7 +69,7 @@ tic
 % Solve the global displacements using a Newton-Raphson iterative solver
 [solverStruct,globalSystem] = LoadStep(meshStruct,boundStruct,solverStruct,globalSystem);
 toc
-disp(sprintf('\b   (Nonlinear Solution)')) % output the time for the solution
+disp(sprintf('\b   (Nonlinear Solution Complete)')) % output the time for the solution
 % tic
 % 
 % % Post-process for plots, flux, etc.

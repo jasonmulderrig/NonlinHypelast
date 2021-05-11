@@ -16,11 +16,14 @@ convergenceBehavior = NaN(numIncrements,maxIterations+1);
 
 d_i = globalSystem.d; % initial global displacement vector
 
-tol = solverStruct.tol;
+tol = solverStruct.tol; % absolute convergence tolerance value
 
+tic
 % Loop through each load increment
 for k = 1:numIncrements
-    k
+    toc
+    disp(sprintf('\b   (Nonlinear Solution of Load Step %d)',k))
+    tic
     % Initialization for each load increment
     boundStruct.SurfEss = boundStruct.SurfEssIncrements{k};
     boundStruct.SurfNat = boundStruct.SurfNatIncrements{k};
@@ -30,7 +33,8 @@ for k = 1:numIncrements
     % zeroth iteration. Note that the incremental essential boundary
     % conditions vary only if non-homogeneous essential boundary conditions
     % are applied.
-    [d_i, boundStruct] = ApplyAllEssBCs(d_i,boundStruct)
+    [d_i, boundStruct] = ApplyAllEssBCs(d_i,boundStruct);
+    freeDOF = boundStruct.freeDOF;
     
     % Calculate G and K_T at the initial zeroth iteration
     [G_i,K_T_i] = GlobalSystemCalcn(d_i,meshStruct,boundStruct);
@@ -39,9 +43,9 @@ for k = 1:numIncrements
     % which will analytically occur at the first load increment (accounting
     % for zero applied force) with the initial zero global displacement
     % vector
-    norm_G_i = norm(G_i);
-    convergenceBehavior(k,iterations+1) = norm(G_i);
-    if norm(G_i) < tol
+    norm_G_i_F = norm(G_i(freeDOF));
+    convergenceBehavior(k,iterations+1) = norm_G_i_F;
+    if norm_G_i_F < tol
         iterations2conv(k) = iterations;
         continue;
     end
@@ -49,40 +53,40 @@ for k = 1:numIncrements
     % Until convergence is reached, iteratively solve for the converged
     % displacement vector
     while true
-        iterations = iterations+1
+        iterations = iterations+1;
         % Find iterated displacement d_i_plus_1 using Soln.m
         delta_d_i_plus_1 = SolnNL(G_i,K_T_i,boundStruct);
-        d_i_plus_1 = d_i + delta_d_i_plus_1     
+        d_i_plus_1 = d_i + delta_d_i_plus_1;   
         
         % Find G, KT at iteration i+1 using GlobalSystem.m
         [G_i_plus_1,K_T_i_plus_1] = GlobalSystemCalcn(d_i_plus_1,meshStruct,boundStruct);
         
-        fprintf('%2.25f\n', norm(G_i_plus_1));
+        norm_G_i_plus_1_F = norm(G_i_plus_1(freeDOF));
         
         % Test for convergence:
-        if norm(G_i_plus_1) <= tol % convergence is achieved
+        if norm_G_i_plus_1_F <= tol % convergence is achieved
             d_i = d_i_plus_1; % update global displacement vector
             iterations2conv(k) = iterations;
-            convergenceBehavior(k,iterations+1) = norm(G_i_plus_1);
+            convergenceBehavior(k,iterations+1) = norm_G_i_plus_1_F;
             break;
         end
         % convergence is not achieved AND the maximum number of iterations
         % has not been reached
-        if (( norm(G_i_plus_1) > tol || isnan(norm(G_i_plus_1)) ) && iterations < maxIterations)
+        if (( norm_G_i_plus_1_F > tol || isnan(norm_G_i_plus_1_F) ) && iterations < maxIterations)
             d_i = d_i_plus_1; % update global displacement vector
             G_i = G_i_plus_1; % update global residual vector
             K_T_i = K_T_i_plus_1; % update global tangent stiffness matrix
-            convergenceBehavior(k,iterations+1) = norm(G_i_plus_1);
+            convergenceBehavior(k,iterations+1) = norm_G_i_plus_1_F;
             continue;
         end
         % convergence is not achieved AND the maximum number of iterations
         % has been reached
-        if (( norm(G_i_plus_1) > tol || isnan(norm(G_i_plus_1)) ) && iterations == maxIterations)
+        if (( norm_G_i_plus_1_F > tol || isnan(norm_G_i_plus_1_F) ) && iterations == maxIterations)
             d_i = d_i_plus_1; % update global displacement vector
             % indicate that convergence was not reached at the maximum
             % iteration number
             iterations2conv(k) = iterations+1;
-            convergenceBehavior(k,iterations+1) = norm(G_i_plus_1);
+            convergenceBehavior(k,iterations+1) = norm_G_i_plus_1_F;
             break;
         end
     end
