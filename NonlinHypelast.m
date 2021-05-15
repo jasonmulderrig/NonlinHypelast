@@ -27,10 +27,6 @@
 %     meshStruct.numNodes  : number of global nodes
 %     meshStruct.Material  : struct with material properties defined in
 %                            InputData
-%         meshStruct.Material.E : Young's modulus  
-%         meshStruct.Material.nu: Poisson's ratio  
-%         meshStruct.Material.D : constitutive relation matrix 
-%                                 such that stress=D*strain  
 %
 % boundStruct : defined in BoxGrid_2D (or loadFromGridFile) and InputData
 %     boundStruct.elements

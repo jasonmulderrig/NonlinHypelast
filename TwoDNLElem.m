@@ -1,8 +1,10 @@
 function [P_e, R_e, K_T_e] = TwoDNLElem(d, meshStruct, elmID, qp, w)
-% [localstiffnessmatrix, localforcevector] = TwoDElem(meshStruct,elementnumber,QuadPoints,Weights)
-% generate the local stiffness matrix and local force vector from
-% body forces for use with LINELAST code.
-% last edit: 1 May 2015 H. Ritz
+% [P_e, R_e, K_T_e] = TwoDNLElem(d, meshStruct, elmID, qp, w);
+% Generate the local external force P_e vector, local internal force R_e 
+% vector, and the local tangent stiffness matrix K_T_e for a particular
+% element
+
+% last update: 16 May 2021 C. Bonneville; J. Mulderrig; S. Srivatsa
 
 % unpack necessary information
 nnpe = meshStruct.nnpe;

@@ -1,16 +1,9 @@
-% ------------------------------------------------------------------------|
-%                                                                         |
-% MAE4700-5700, Finite Element Analysis for Mechanical & Aerospace Design |
-%                                                                         |
-% Copyright: Cornell University (this software should not be used without |
-% written permission)                                                     |
-%                                                                         |
-% Authors: N. Zabaras (zabaras@cornell.edu) & Xiang Ma (xm25@cornell.edu) |
-% Last update: 17 Nov 2015 H. Ritz ; Y. Xu                                |
-% ------------------------------------------------------------------------|
-%
 function  P=ApplyNaturalBC(i,boundStruct,meshStruct,P)
-% Computed the element load from natural BCs.
+% P=ApplyNaturalBC(i,boundStruct,meshStruct,P);
+% Apply each natural boundary condition to the global external force vector
+% P
+
+% last update: 16 May 2021 C. Bonneville; J. Mulderrig; S. Srivatsa
 
 % unpack necessary variables
 sideInd = boundStruct.SurfNat(i,1);

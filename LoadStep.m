@@ -1,11 +1,13 @@
 function [solverStruct,globalSystem] = LoadStep(meshStruct,boundStruct,solverStruct,globalSystem)
 % [solverStruct,globalSystem] = LoadStep(meshStruct,boundStruct,solverStruct,globalSystem);
-% Use a Newton-Raphson iterative solution scheme to solve for the global 
-% displacement vector. At each increment, this function calculates the 
-% change in displacement and determines if convergence has been reached
-% NOTE: FUNCTION CALLS DO NOT INCLUDE INPUTS/OUTPUTS IN FINAL FORM
+% Perform a Newton-Raphson iterative solution scheme to solve for the 
+% global displacement vector. At each increment, this function calculates 
+% the change in displacement, updates the global displacement vector, 
+% determines if convergence has been reached for the global residual
+% vector, stores the error associated with each Newton-Raphson iteration,
+% and stores the number of iterations needed to reach convergence
 
-% last update: 30 Apr 2021 C. Bonneville; J. Mulderrig; S. Srivatsa 
+% last update: 16 May 2021 C. Bonneville; J. Mulderrig; S. Srivatsa 
 
 % Initialization before looping through each load increment
 numIncrements=solverStruct.numIncrements;
@@ -34,7 +36,8 @@ for k = 1:numIncrements
     % conditions vary only if non-homogeneous essential boundary conditions
     % are applied.
     [d_i, boundStruct] = ApplyAllEssBCs(d_i,boundStruct);
-    freeDOF = boundStruct.freeDOF;
+    
+    freeDOF = boundStruct.freeDOF; % extract the free degrees of freedom
     
     % Calculate G and K_T at the initial zeroth iteration
     [G_i,K_T_i] = GlobalSystemCalcn(d_i,meshStruct,boundStruct);
@@ -43,7 +46,7 @@ for k = 1:numIncrements
     % which will analytically occur at the first load increment (accounting
     % for zero applied force) with the initial zero global displacement
     % vector
-    norm_G_i_F = norm(G_i(freeDOF));
+    norm_G_i_F = norm(G_i(freeDOF)); % residual error
     convergenceBehavior(k,iterations+1) = norm_G_i_F;
     if norm_G_i_F < tol
         iterations2conv(k) = iterations;
@@ -61,7 +64,7 @@ for k = 1:numIncrements
         % Find G, KT at iteration i+1 using GlobalSystem.m
         [G_i_plus_1,K_T_i_plus_1] = GlobalSystemCalcn(d_i_plus_1,meshStruct,boundStruct);
         
-        norm_G_i_plus_1_F = norm(G_i_plus_1(freeDOF));
+        norm_G_i_plus_1_F = norm(G_i_plus_1(freeDOF)); % residual error
         
         % Test for convergence:
         if norm_G_i_plus_1_F <= tol % convergence is achieved

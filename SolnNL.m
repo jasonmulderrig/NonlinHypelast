@@ -1,9 +1,10 @@
-% SOLN 
-% Apply the essential boundary conditions and solve the global system for
-% the nodal degrees of freedom for LinElast. 
-% last edit: 22 November 2017 H. Ritz
-
 function delta_d_plus_1 = SolnNL(G,K_T,boundStruct)
+% delta_d_plus_1 = SolnNL(G,K_T,boundStruct);
+% Solve the global matrix system of equations for the global displacement 
+% increment vector delta_d_plus_1
+
+% last update: 16 May 2021 C. Bonneville; J. Mulderrig; S. Srivatsa
+
 % unpack the things you need
 freeDOF = boundStruct.freeDOF;
 numEq=length(G);
