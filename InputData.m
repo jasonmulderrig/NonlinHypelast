@@ -1,9 +1,12 @@
 function [meshStruct,boundStruct,solverStruct,globalSystem]=InputData(meshStruct,boundStruct)
 % [meshStruct,boundStruct,solverStruct,globalSystem]=InputData(meshStruct,boundStruct);
-% Define the essential and natural BCs, and define the material stiffness
-% matrix D
+% Define the essential and natural BCs, material properties, the material 
+% stiffness matrix D for the St. Venant hyperelastic material law, the
+% displacement and force increment valuess, the initial guess for the  
+% global displacement vector, and parameters necessary for the nonlinear 
+% Newton-Raphson solution scheme
 
-% last update: 30 Apr 2021 C. Bonneville; J. Mulderrig; S. Srivatsa 
+% last update: 16 May 2021 C. Bonneville; J. Mulderrig; S. Srivatsa 
 
 % For complex geometries, you need to firstly plot the mesh (set both 
 % PlotInstructions.plot_mesh and PlotInstructions.plot_boundary to be
@@ -34,8 +37,6 @@ switch DeformationState
     otherwise
         error('Is this two-dimensional plane strain deformation?');
 end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 switch ConstitutiveLaw
     case 'StVenant'
