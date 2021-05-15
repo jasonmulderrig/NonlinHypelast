@@ -45,8 +45,8 @@ displacements=[reshape(d,nsd,[])]';
         YY = [Nodes(2, glb),Nodes(2,glb(1))];
         plot(XX,YY,'b');hold on;
 
-        displacedXX = Nodes(1, glb) + scale* displacements(glb,1)';
-        displacedYY = Nodes(2, glb) + scale* displacements(glb,2)';
+        displacedXX = Nodes(1, glb) + displacements(glb,1)'; % displacedXX = Nodes(1, glb) + scale * displacements(glb,1)';
+        displacedYY = Nodes(2, glb) + displacements(glb,2)'; % displacedYY = Nodes(2, glb) + scale * displacements(glb,2)';
         displacedXX = [displacedXX, displacedXX(1)];
         displacedYY = [displacedYY, displacedYY(1)];
         plot (displacedXX,displacedYY,'LineStyle','--','Color','r');
