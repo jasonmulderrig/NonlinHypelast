@@ -2,7 +2,7 @@
 % Calculate stress, make contour plots, vector field plots, deformed mesh, etc.
 %
 % last update: 22 November 2017 H. Ritz
-function PostProcessor(PlotInstructions,meshStruct,globalSystem)
+function PostProcessor(PlotInstructions,meshStruct,globalSystem,solverStruct)
 d = globalSystem.d;
 neq=meshStruct.numEq;
 u = d(1:2:neq-1);
@@ -48,3 +48,22 @@ end
 if strcmp(PlotInstructions.plot_fringes,'yes')
     PlotFringes(2*tau_max, 10,meshStruct);
 end
+
+% Plot Convergence Behavior
+convBeh = solverStruct.convergenceBehavior;
+iter = solverStruct.iterations2conv; 
+numInc = solverStruct.numIncrements;
+iter2inc = 0:1:iter(2); iterlastinc = 0:1:iter(numInc);
+figure(9)
+subplot(2,1,1)
+plot(iter2inc,convBeh(2,1:(iter(2)+1)),'b-');
+title('Convergence Behavior for Second Loadstep')
+xlabel('Iteration Number')
+ylabel('Norm of Free DOFs of Global Residual Vector')
+set(gca,'YScale','log')
+subplot(2,1,2)
+plot(iterlastinc,convBeh(numInc,1:(iter(numInc)+1)),'b-');
+title('Convergence Behavior for Last Loadstep')
+xlabel('Iteration Number')
+ylabel('Norm of Free DOFs of Global Residual Vector')
+set(gca,'YScale','log')
