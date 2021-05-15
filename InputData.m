@@ -19,7 +19,7 @@ boundStruct.SurfEss = [4 1 0
 % The natural boundary condition is defined in tangential and normal
 % direction (rather than global x and y direction),outer normal is
 % positive.
-boundStruct.SurfNat = [2 0 1e-4]; % e.g. [3 10 -10] means surface # 3 has 
+boundStruct.SurfNat = [2 0 406250]; % e.g. [3 10 -10] means surface # 3 has 
                                  % a constantly distributed tangential traction
                                  % 10 and normal traction (pointing in) 10.
 
