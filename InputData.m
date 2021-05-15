@@ -25,7 +25,8 @@ boundStruct.SurfNat = [2 0 1e-4]; % e.g. [3 10 -10] means surface # 3 has
 
 % Define material properties
 lambda = 1; % first normalized Lame constant
-mu     = 10; % second normalized Lame constant
+mu     = 10; % second normalized Lame constant, or the shear modulus
+beta   = 10; % bulk modulus
 DeformationState = 'PlaneStrain'; % only in plane strain deformation
 ConstitutiveLaw = 'StVenant';
 switch DeformationState
@@ -47,6 +48,7 @@ end
 
 meshStruct.Material.lambda=lambda;
 meshStruct.Material.mu=mu;
+meshStruct.Material.beta=beta;
 meshStruct.DeformationState=DeformationState;
 meshStruct.ConstitutiveLaw=ConstitutiveLaw;
 

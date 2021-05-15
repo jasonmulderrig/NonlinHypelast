@@ -86,7 +86,7 @@ for e = 1:numEls
             case 'compressibleNeoHookean'
                 J_e = det(F_e);
                 invC_e = inv(C_e);
-                beta = meshStruct.Material.lambda;
+                beta = meshStruct.Material.beta;
                 mu = meshStruct.Material.mu;
 
                 D11 = (beta * J_e + 2 * mu) * invC_e(1, 1) ^ 2;
