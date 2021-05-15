@@ -73,6 +73,6 @@ disp(sprintf('\b   (Nonlinear Solution Complete)')) % output the time for the so
 tic
 % 
 % % Post-process for plots, flux, etc.
-PostProcessor(PlotInstructions,meshStruct,globalSystem);
+PostProcessor(PlotInstructions,meshStruct,globalSystem,solverStruct);
 toc
 disp(sprintf('\b   (Postprocessing)')) % output time for post-processing
